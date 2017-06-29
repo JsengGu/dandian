@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<title>Document</title>
+	<style type="text/css">
+		#box{
+			width: 200px;
+			height: 200px;
+			background: red;
+			margin: 100px auto;
+		}
+	</style>
+</head>
+<body>
+	<div id="box"></div>
+	<script type="text/javascript">
+		(function (doc,win) {
+            function change() {
+                doc.documentElement.style.fontSize=20*doc.documentElement.clientWidth/320+'px';
+            }
+            change();
+
+            win.addEventListener('resize',change,false);
+        })(document,window);
+
+        document.addEventListener('DOMContentLoaded',function () {
+        	var oBox = document.getElementById('box');
+			var x1 = oBox.offsetLeft + oBox.offsetWidth/2;
+			var y1 = oBox.offsetTop + oBox.offsetHeight/2;
+			// var x1 = ev.targetTouches[1].clientX;
+			// var y1 = ev.targetTouches[1].clientY;
+			var rotate = 0;
+
+			function getD(ev){
+				// var {x2,y2} = ev.targetTouches[0];
+				var x2 = ev.targetTouches[0].clientX;
+				var y2 = ev.targetTouches[0].clientY;
+				var x = x2 - x1;	//对边
+				var y = y2 - y1;	//临边
+				return Math.atan2(y,x);
+			}
+
+			oBox.addEventListener('touchstart',function(ev){
+				var startD = getD(ev) - rotate;
+
+				function fnMove(ev){
+					var endD = getD(ev);
+					var deltaD = endD - startD;
+					// oBox.style.WebkitTransfrom = 'rotate('+deltaD+'deg)';
+					oBox.style.transform = `rotate(${deltaD}rad)`
+					rotate = deltaD;
+				}
+
+				function fnEnd(){
+					document.removeEventListener('touchmove',fnMove,false)
+					document.removeEventListener('touchend',fnEnd,false)
+				}
+
+				document.addEventListener('touchmove',fnMove,false)
+				document.addEventListener('touchend',fnEnd,false)
+			},false);
+        },false)
+		
+	</script>
+</body>
+</html>
+
+
+
+
